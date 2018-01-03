@@ -30,3 +30,40 @@ housing_tree_predictions = tree_reg.predict(housing_prepared)
 tree_mse = mean_squared_error(housing_labels, housing_tree_predictions)
 tree_rmse = np.sqrt(tree_mse)
 print(tree_rmse)
+
+# cross validation
+from sklearn.model_selection import cross_val_score
+
+
+def display_scores(scores):
+    print("Scores:", scores)
+    print("Mean:", scores.mean())
+    print("Standard deviation:", scores.std())
+
+
+scores = cross_val_score(tree_reg, housing_prepared, housing_labels,
+                         scoring="neg_mean_squared_error", cv=10)
+rmse_scores = np.sqrt(-scores)
+
+lin_scores = cross_val_score(lin_reg,  housing_prepared, housing_labels,
+                             scoring="neg_mean_squared_error", cv=10)
+lin_rmse_scores = np.sqrt(-lin_scores)
+
+display_scores(rmse_scores)
+display_scores(lin_rmse_scores)
+
+# random forest
+print('random-forest', '-' * 50)
+from sklearn.ensemble import RandomForestRegressor
+
+forest_reg = RandomForestRegressor()
+forest_reg.fit(housing_prepared, housing_labels)
+housing_forest_predictions = forest_reg.predict(housing_prepared)
+forest_mse = mean_squared_error(housing_labels, housing_forest_predictions)
+forest_rmse = np.sqrt(forest_mse)
+print(forest_rmse)
+
+forest_scores = cross_val_score(forest_reg,  housing_prepared, housing_labels,
+                                scoring="neg_mean_squared_error", cv=10)
+forest_rmse_scores = np.sqrt(-forest_scores)
+display_scores(forest_rmse_scores)
